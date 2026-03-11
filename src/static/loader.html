@@ -140,10 +140,12 @@
         transition: background-color 0.1s ease-in;
       }
     </style>
-    <script src="/baremux/index.js" defer></script>
-    <script src="/libcurl/index.js" defer></script>
-    <script src="/scram/scramjet.all.js" defer></script>
-    <script src="/uv/uv.config.js" defer></script>
+    <!-- these helpers are shipped as ES modules so Vite can bundle them; without the
+         `type="module"` attribute the build throws warnings during `vite build` */
+    <script type="module" src="/baremux/index.js" defer></script>
+    <script type="module" src="/libcurl/index.js" defer></script>
+    <script type="module" src="/scram/scramjet.all.js" defer></script>
+    <script type="module" src="/uv/uv.config.js" defer></script>
   </head>
 
   <body>

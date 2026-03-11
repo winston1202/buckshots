@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import theme from '/src/styles/theming.module.css';
 import { useOptions } from '/src/utils/optionsContext';
 import SettingsContainerItem from './settings/components/ContainerItem';
-import * as settings from '/src/data/settings';
 import PanicDialog from './PanicDialog';
 
 const Type = ({ type, title }) => {
@@ -30,13 +29,20 @@ const Type = ({ type, title }) => {
   );
 };
 
-const Setting = ({ setting }) => {
+const Setting = ({ setting, configs = [] }) => {
   const { options, updateOption } = useOptions();
   const [panicOpen, setPanicOpen] = useState(false);
 
-  const privSettings = settings.privacyConfig({
-    options,
-    updateOption,
+  // helpers that look up the appropriate configuration function by name and
+  // execute it with the usual options.  this mirrors the logic on the page
+  // side so the component doesn't need to statically import the module.
+  const findConfig = (name) => configs.find((c) => c.name === name);
+  const runConfig = (name, extras = {}) => {
+    const cfg = findConfig(name);
+    return cfg ? cfg.fn({ options, updateOption, ...extras }) : {};
+  };
+
+  const privSettings = runConfig('Privacy', {
     openPanic: () => setPanicOpen(true),
   });
 
@@ -63,9 +69,9 @@ const Setting = ({ setting }) => {
   return (
     <Container>
       {setting === 'Privacy' && <Type type={() => privSettings} title="Privacy" />}
-      {setting === 'Customize' && <Type type={settings.customizeConfig} title="Customize" />}
-      {setting === 'Browsing' && <Type type={settings.browsingConfig} title="Browsing" />}
-      {setting === 'Advanced' && <Type type={settings.advancedConfig} title="Advanced" />}
+      {setting === 'Customize' && <Type type={() => runConfig('Customize')} title="Customize" />}
+      {setting === 'Browsing' && <Type type={() => runConfig('Browsing')} title="Browsing" />}
+      {setting === 'Advanced' && <Type type={() => runConfig('Advanced')} title="Advanced" />}
     </Container>
   );
 };

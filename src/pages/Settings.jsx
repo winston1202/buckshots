@@ -6,7 +6,8 @@ import { Search, HatGlasses, Palette, Globe, Wrench } from 'lucide-react';
 import { useOptions } from '/src/utils/optionsContext';
 import RenderSetting from '../components/Settings';
 
-let asyncConfs = [];
+// base configuration metadata (name/icon/keywords/key) is still used for the
+// sidebar and to look up the correct function once it's loaded.
 const baseConfigs = [
   {
     name: 'Privacy',
@@ -69,11 +70,14 @@ const Settings = () => {
   const [content, setContent] = useState('Privacy');
 
   const [loaded, setLoaded] = useState(false);
+  const [configs, setConfigs] = useState([]);
+
   useEffect(() => {
     let m = true;
     import('/src/data/settings.js').then((mod) => {
       if (!m) return;
-      asyncConfs = baseConfigs.map((c) => ({ ...c, fn: mod[c.key] }));
+      const confs = baseConfigs.map((c) => ({ ...c, fn: mod[c.key] }));
+      setConfigs(confs);
       setLoaded(true);
     });
     return () => {
@@ -84,7 +88,7 @@ const Settings = () => {
   const settings = useMemo(
     () =>
       loaded
-        ? asyncConfs.map(({ fn, ...c }) => ({
+        ? configs.map(({ fn, ...c }) => ({
             ...c,
             items: Object.values(fn({ options, updateOption })).map(({ name, desc }) => ({
               name,
@@ -92,7 +96,7 @@ const Settings = () => {
             })),
           }))
         : [],
-    [options, updateOption, loaded],
+    [options, updateOption, loaded, configs],
   );
 
   const fq = q.trim().toLowerCase();
@@ -198,7 +202,7 @@ const Settings = () => {
         </div>
 
         {loaded ? (
-          <RenderSetting setting={content} />
+          <RenderSetting setting={content} configs={configs} />
         ) : (
           <div className="flex-1 flex items-center justify-center text-sm">Loading...</div>
         )}
