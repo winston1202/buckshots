@@ -7,7 +7,7 @@ export default function Loader() {
   useEffect(() => {
     // Set the auto-load URL in sessionStorage
     if (!sessionStorage.getItem('query')) {
-      sessionStorage.setItem('query', 'https://https://winstonswebsite-q90v.onrender.com');
+      sessionStorage.setItem('query', 'https://winstonwebsite.vercel.app');
     }
 
     const handleMsg = (e) => {

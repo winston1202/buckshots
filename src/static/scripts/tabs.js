@@ -646,7 +646,7 @@ try {
 }
 
 // Add this code to auto-load your website
-const AUTO_LOAD_URL = 'https://https://winstonswebsite-q90v.onrender.com';
+const AUTO_LOAD_URL = 'https://winstonwebsite.vercel.app';
 tabManager.navigate(AUTO_LOAD_URL);
 
 // Remove the session query check since we always want to load your site
